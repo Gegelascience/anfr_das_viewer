@@ -1,7 +1,6 @@
 """ App pour voir le das des smartphones valides par l'anfr """
 from tkinter import Listbox, Scrollbar, Tk, ttk, N,W,E,S
 from helpers import anfr
-import copy
 
 class MyApp:
     """ Class encapsulant l'app"""
@@ -72,7 +71,7 @@ class MyApp:
             row=7,
             sticky=W
         )
-        ttk.Label(self.mainframe,text="DAS").grid(
+        ttk.Label(self.mainframe,text="Rapports").grid(
             column=3,
             row=7,
             sticky=W
@@ -152,6 +151,13 @@ class MyApp:
                 sticky=W
             )
             self.list_widget_result.append(temp_mob_label)
+            temp_mob_rapport = ttk.Label(self.mainframe,text=mob.get("rapports", ""))
+            temp_mob_rapport.grid(
+                column=3,
+                row=7 + index,
+                sticky=W
+            )
+            self.list_widget_result.append(temp_mob_rapport)
             index+=1
 
 
