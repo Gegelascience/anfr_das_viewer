@@ -14,7 +14,9 @@ class MyApp:
 
         self.anfr = anfr.AnfrConnector()
         self.original_records = []
+        self.filtered_records = []
         self.get_das_original_data()
+        self.list_widget_result =[]
 
         brands = self.get_brand_list()
         #brand_name_entry = ttk.Entry(self.mainframe, width=7, textvariable="marque")
@@ -45,18 +47,35 @@ class MyApp:
             row=1,
             sticky=W)
 
-        # résultat recherche
-        self.info = StringVar()
-        ttk.Label(self.mainframe, textvariable=self.info).grid(
-            column=2,
-            row=9,
-            sticky=(W, E))
+        # exemple label variable
+        #self.info = StringVar()
+        #ttk.Label(self.mainframe, textvariable=self.info).grid(
+        #    column=2,
+        #    row=6,
+        #    sticky=(W, E))
 
 
         ttk.Button(self.mainframe, text="Rechercher", command=self.search_mobile).grid(
             column=3,
-            row=9,
+            row=5,
             sticky=W)
+
+
+        ttk.Label(self.mainframe,text="Marque").grid(
+            column=1,
+            row=7,
+            sticky=W
+        )
+        ttk.Label(self.mainframe,text="Modele").grid(
+            column=2,
+            row=7,
+            sticky=W
+        )
+        ttk.Label(self.mainframe,text="DAS").grid(
+            column=3,
+            row=7,
+            sticky=W
+        )
 
 
         for child in self.mainframe.winfo_children():
@@ -102,14 +121,33 @@ class MyApp:
 
         selection_id = self.brand_name_entry.curselection()
 
-        brand_filter = self.brand_name_entry.get(selection_id)
-        filtered_records = [mobile for mobile in self.original_records if mobile.get("marque") == brand_filter]
+        brand = self.brand_name_entry.get(selection_id)
+        self.filtered_records = [mob for mob in self.original_records if mob.get("marque") == brand]
 
-        concat_result = ""
-        for record in filtered_records:
-            concat_result = concat_result + record.get("modele") + "\r"
+        print(self.filtered_records[0].keys())
 
-        self.info.set(concat_result)
+        self.show_result()
+
+    def show_result(self):
+        """affiche les resultats"""
+
+        index = 1
+        for mob in self.filtered_records:
+
+            temp_brand_label =ttk.Label(self.mainframe,text=mob.get("marque")).grid(
+            column=1,
+            row=7 + index,
+            sticky=W
+            )
+            self.list_widget_result.append(temp_brand_label)
+            temp_mob_label = ttk.Label(self.mainframe,text=mob.get("modele")).grid(
+                column=2,
+                row=7 + index,
+                sticky=W
+            )
+            self.list_widget_result.append(temp_mob_label)
+            index+=1
+
 
 
 if __name__ == "__main__":
