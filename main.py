@@ -1,6 +1,7 @@
 """ App pour voir le das des smartphones valides par l'anfr """
-from tkinter import Listbox, Scrollbar, StringVar, Tk, ttk, N,W,E,S
+from tkinter import Listbox, Scrollbar, Tk, ttk, N,W,E,S
 from helpers import anfr
+import copy
 
 class MyApp:
     """ Class encapsulant l'app"""
@@ -130,17 +131,22 @@ class MyApp:
 
     def show_result(self):
         """affiche les resultats"""
+        print(self.list_widget_result)
+        for old_res in self.list_widget_result:
+            old_res.destroy()
 
         index = 1
         for mob in self.filtered_records:
 
-            temp_brand_label =ttk.Label(self.mainframe,text=mob.get("marque")).grid(
+            temp_brand_label =ttk.Label(self.mainframe,text=mob.get("marque"))
+            temp_brand_label.grid(
             column=1,
             row=7 + index,
             sticky=W
             )
             self.list_widget_result.append(temp_brand_label)
-            temp_mob_label = ttk.Label(self.mainframe,text=mob.get("modele")).grid(
+            temp_mob_label = ttk.Label(self.mainframe,text=mob.get("modele"))
+            temp_mob_label.grid(
                 column=2,
                 row=7 + index,
                 sticky=W
