@@ -1,5 +1,6 @@
 """module de l'app"""
 from tkinter import Listbox, Scrollbar, Tk, ttk, N,W,E,S, Toplevel, StringVar, END
+from tkinter.constants import CENTER
 from helpers import anfr
 
 
@@ -97,18 +98,22 @@ class MyApp(Tk):
 
             columns = ("marque","modele","conformite_aux_normes","rapports")
             self.result_table = ttk.Treeview(self.mainframe,column =columns,show="headings")
-            self.result_table.grid(row=8, column=1, rowspan=11, padx=5, pady=5)
+            self.result_table.grid(row=8, column=1, rowspan=11, columnspan=5, padx=5, pady=5)
 
+            self.result_table.column("marque", anchor=CENTER)
             self.result_table.heading("marque", text="Marque")
+            self.result_table.column("modele", anchor=CENTER)
             self.result_table.heading("modele", text="Modele")
+            self.result_table.column("conformite_aux_normes", anchor=CENTER, width=100)
             self.result_table.heading("conformite_aux_normes", text="Conforme ?")
+            self.result_table.column("rapports", anchor=CENTER)
             self.result_table.heading("rapports", text="Rapports")
 
 
 
             # Link a scrollbar to the canvas
             vsb = Scrollbar(self.mainframe, orient="vertical", command=self.result_table.yview)
-            vsb.grid(row=8, column=4, rowspan=11, sticky=(N,S))
+            vsb.grid(row=8, column=6, rowspan=11, sticky=(N,S))
             self.result_table.configure(yscrollcommand=vsb.set)
 
 
