@@ -1,5 +1,5 @@
 """module de l'app"""
-from tkinter import Listbox, Scrollbar, Tk, ttk, N,W,E,S, Toplevel, StringVar, Frame, Canvas
+from tkinter import Listbox, Scrollbar, Tk, ttk, N,W,E,S, Toplevel, StringVar, END
 from helpers import anfr
 
 
@@ -95,54 +95,21 @@ class MyApp(Tk):
                 sticky=W)
 
 
+            columns = ("marque","modele","conformite_aux_normes","rapports")
+            self.result_table = ttk.Treeview(self.mainframe,column =columns,show="headings")
+            self.result_table.grid(row=8, column=1, rowspan=11, padx=5, pady=5)
 
-            #creation du tableau de resultat
-            self.frame_canvas = Frame(self.mainframe, bg="red")
-            self.frame_canvas.grid(row=8, column=1, columnspan=5, rowspan=11, padx=5, pady=5, sticky=(N,W))
+            self.result_table.heading("marque", text="Marque")
+            self.result_table.heading("modele", text="Modele")
+            self.result_table.heading("conformite_aux_normes", text="Conforme ?")
+            self.result_table.heading("rapports", text="Rapports")
 
-            #entetes des résultats
-            ttk.Label(self.frame_canvas,text="Marque").grid(
-                column=0,
-                row=1,
-                sticky=W
-            )
-            ttk.Label(self.frame_canvas,text="Modele").grid(
-                column=1,
-                row=1,
-                sticky=W
-            )
-            ttk.Label(self.frame_canvas,text="Conforme ?").grid(
-                column=2,
-                row=1,
-                sticky=W
-            )
-            ttk.Label(self.frame_canvas,text="Rapports").grid(
-                column=3,
-                row=1,
-                sticky=W
-            )
 
-            
-
-            # Add a canvas in that frame
-            self.canvas = Canvas(self.frame_canvas, bg="yellow")
-            self.canvas.grid(row=2, column=0, rowspan=10, columnspan=4, sticky=W)
 
             # Link a scrollbar to the canvas
-            vsb = Scrollbar(self.frame_canvas, orient="vertical", command=self.canvas.yview)
-            vsb.grid(row=2, column=4, rowspan=10, sticky=(N,S))
-            self.canvas.configure(yscrollcommand=vsb.set)
-
-            # Create a frame to contain the results
-            self.frame_result = Frame(self.canvas, bg="blue")
-            self.frame_result.grid(
-                padx=5, pady=5
-            )
-            self.canvas.create_window((0, 0), window=self.frame_result, anchor="nw")
-
-            
-
-
+            vsb = Scrollbar(self.mainframe, orient="vertical", command=self.result_table.yview)
+            vsb.grid(row=8, column=4, rowspan=11, sticky=(N,S))
+            self.result_table.configure(yscrollcommand=vsb.set)
 
 
             for child in self.mainframe.winfo_children():
@@ -205,54 +172,14 @@ class MyApp(Tk):
     def show_result(self, list_resultats: list):
         """affiche les resultats"""
 
-        for old_res in self.list_widget_result:
-            old_res.destroy()
+        for i in self.result_table.get_children():
+            self.result_table.delete(i)
 
-        index = 1
         for mob in list_resultats:
-
-            #ajout de la colonne marque
-            temp_brand_label =ttk.Label(self.frame_result,text=mob.get("marque"))
-            temp_brand_label.grid(
-            column=1,
-            row=index +1,
-            sticky=W
-            )
-
-            self.list_widget_result.append(temp_brand_label)
-
-            #ajout de la colonne nom du modele
-            temp_mob_label = ttk.Label(self.frame_result,text=mob.get("modele"))
-            temp_mob_label.grid(
-                column=2,
-                row=index +1,
-                sticky=W
-            )
-
-            self.list_widget_result.append(temp_mob_label)
-
-            # ajout du lien de la conformité
-            temp_mob_confort = ttk.Label(self.frame_result,text=mob.get("conformite_aux_normes", ""))
-            temp_mob_confort.grid(
-                column=3,
-                row=index +1,
-                sticky=W
-            )
-
-            self.list_widget_result.append(temp_mob_confort)
-
-            # ajout du lien des rapports
-            temp_mob_rapport = ttk.Label(self.frame_result,text=mob.get("rapports", ""))
-            temp_mob_rapport.grid(
-                column=4,
-                row=index +1,
-                sticky=W
-            )
-
-            self.list_widget_result.append(temp_mob_rapport)
-            index+=1
-
-        # Set the canvas scrolling region
-        self.frame_result.update_idletasks()
-
-        self.canvas.config(scrollregion=self.canvas.bbox("all"))
+            row_data= (
+                mob.get("marque"),
+                mob.get("modele"),
+                mob.get("conformite_aux_normes", ""),
+                mob.get("rapports", "")
+                )
+            self.result_table.insert('', END, values= row_data)
