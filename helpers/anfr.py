@@ -38,9 +38,9 @@ class AnfrConnector:
         print(response.status_code)
         return None
 
-    def get_resource_data(self, resource_id: str):
+    def get_resource_data(self, resource_id: str,limit: int):
         """récupère une ressource par son id"""
-        response = requests.get(self.__base_url + self.__endpoint_resource + resource_id)
+        response = requests.get(self.__base_url + self.__endpoint_resource + resource_id + "&limit=" + str(limit))
         if response.status_code == 200:
             if response.json().get("success"):
                 return response.json().get("result")
