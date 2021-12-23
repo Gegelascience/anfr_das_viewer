@@ -144,8 +144,6 @@ class MyApp(Tk):
         brand = self.brand_name_entry.get(selection_id)
         filtered_records = [mob for mob in self.original_records if mob.get("marque") == brand]
 
-        print(filtered_records[0].keys())
-
         self.show_result(filtered_records)
 
     def show_result(self, list_resultats: list):

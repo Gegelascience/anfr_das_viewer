@@ -1,5 +1,6 @@
 """module des popin de l'app"""
 from tkinter import Toplevel, StringVar, ttk, W,E
+import webbrowser
 
 class Splash(Toplevel):
     """classe de la splash screen"""
@@ -33,7 +34,6 @@ class DetailsDAS(Toplevel):
     def __init__(self,parent, raw_data):
         Toplevel.__init__(self,parent)
         self.title("Détails DAS")
-        print(raw_data)
 
         self.reports_url = raw_data.get("rapports")
         # modele
@@ -194,4 +194,4 @@ class DetailsDAS(Toplevel):
 
     def show_reports(self):
         """ouvre le navigateur sur les rapports"""
-        print(self.reports_url)
+        webbrowser.open(self.reports_url)
