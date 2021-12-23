@@ -1,33 +1,10 @@
-"""module de l'app"""
-from tkinter import Listbox, Scrollbar, Tk, ttk, N,W,E,S, Toplevel, StringVar, END
+"""module de l'ui de l'app"""
+from tkinter import Listbox, Scrollbar, Tk, ttk, N,W,E,S, END
 from tkinter.constants import CENTER
 from helpers import anfr
+import app_popin
 
 
-class Splash(Toplevel):
-    """classe de la splash screen"""
-    def __init__(self, parent):
-        Toplevel.__init__(self, parent)
-        self.title("Visualisateur de DAS")
-
-        self.msg_info = StringVar()
-        self.msg_info.set("Récupération des données en cours...")
-
-        ttk.Label(self,textvariable=self.msg_info).grid(
-            column=1,
-            row=1,
-            sticky=(W, E)
-        )
-
-        for child in self.winfo_children():
-            child.grid_configure(padx=10, pady=10)
-
-        ## required to make window show before the program gets to the mainloop
-        self.update()
-
-    def update_failure_msg(self, msg:str):
-        """ mise à jour du message"""
-        self.msg_info.set(msg)
 
 
 class MyApp(Tk):
@@ -36,7 +13,7 @@ class MyApp(Tk):
     def __init__(self):
         Tk.__init__(self)
         self.withdraw()
-        splash = Splash(self)
+        splash = app_popin.Splash(self)
 
 
         self.title("Visualisateur de DAS")
@@ -59,6 +36,11 @@ class MyApp(Tk):
             self.deiconify()
 
             self.list_widget_result =[]
+
+            ttk.Label(self.mainframe, text="Selectionner \r une marque").grid(
+                column=0,
+                row=1,
+                sticky=W)
 
             brands = self.get_brand_list()
             #brand_name_entry = ttk.Entry(self.mainframe, width=7, textvariable="marque")
@@ -83,37 +65,30 @@ class MyApp(Tk):
             scrollbar_brands.config(command = self.brand_name_entry.yview)
 
 
-
-            ttk.Label(self.mainframe, text="Selectionner \r une marque").grid(
-                column=3,
-                row=1,
-                sticky=W)
-
-
             ttk.Button(self.mainframe, text="Rechercher", command=self.search_mobile).grid(
-                column=3,
-                row=5,
-                sticky=W)
+                column=4,
+                row=1,
+                sticky=(W,E))
 
 
-            columns = ("marque","modele","conformite_aux_normes","rapports")
+            columns = ("marque","modele","conformite_aux_normes","ref_dossier")
             self.result_table = ttk.Treeview(self.mainframe,column =columns,show="headings")
-            self.result_table.grid(row=8, column=1, rowspan=11, columnspan=5, padx=5, pady=5)
+            self.result_table.grid(row=8, column=0, rowspan=11, columnspan=7, padx=5, pady=5)
 
-            self.result_table.column("marque", anchor=CENTER)
+            self.result_table.column("marque", anchor=CENTER, width=150)
             self.result_table.heading("marque", text="Marque")
             self.result_table.column("modele", anchor=CENTER)
             self.result_table.heading("modele", text="Modele")
             self.result_table.column("conformite_aux_normes", anchor=CENTER, width=100)
-            self.result_table.heading("conformite_aux_normes", text="Conforme ?")
-            self.result_table.column("rapports", anchor=CENTER)
-            self.result_table.heading("rapports", text="Rapports")
+            self.result_table.heading("conformite_aux_normes", text="Conformité")
+            self.result_table.column("ref_dossier", anchor=CENTER)
+            self.result_table.heading("ref_dossier", text="Dossier")
 
-
+            self.result_table.bind("<Double-1>",self.show_details)
 
             # Link a scrollbar to the canvas
             vsb = Scrollbar(self.mainframe, orient="vertical", command=self.result_table.yview)
-            vsb.grid(row=8, column=6, rowspan=11, sticky=(N,S))
+            vsb.grid(row=8, column=8, rowspan=11, sticky=(N,S))
             self.result_table.configure(yscrollcommand=vsb.set)
 
 
@@ -143,7 +118,6 @@ class MyApp(Tk):
         anfr_connector = anfr.AnfrConnector()
         dataset = anfr_connector.search_dataset_by_name("das-telephonie-mobile")
         if dataset and len(dataset.get("resources")) > 0 :
-            print(dataset.get("resources")[0].keys())
             resource = anfr_connector.get_resource_data(dataset.get("resources")[0].get("id"),1000)
             if resource:
                 self.original_records = resource.get("records")
@@ -185,6 +159,16 @@ class MyApp(Tk):
                 mob.get("marque"),
                 mob.get("modele"),
                 mob.get("conformite_aux_normes", ""),
-                mob.get("rapports", "")
+                mob.get("ref_dossier")
                 )
             self.result_table.insert('', END, values= row_data)
+
+
+    def show_details(self, evt):
+        """affiche la popin de details"""
+        selection =self.result_table.selection()
+        if len(selection) > 0:
+            values = self.result_table.item(selection[0]).get("values")
+            line_data = [mob for mob in self.original_records if mob.get("modele") == values[1]]
+            if len(line_data) > 0:
+                app_popin.DetailsDAS(self,line_data[0])
