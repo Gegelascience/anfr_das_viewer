@@ -71,7 +71,7 @@ class MyApp(Tk):
                 sticky=(W,E))
 
 
-            columns = ("marque","modele","conformite_aux_normes","ref_dossier")
+            columns = ("marque","modele","conformite_aux_normes","date_controle","ref_dossier")
             self.result_table = ttk.Treeview(self.mainframe,column =columns,show="headings")
             self.result_table.grid(row=8, column=0, rowspan=11, columnspan=7, padx=5, pady=5)
 
@@ -81,6 +81,8 @@ class MyApp(Tk):
             self.result_table.heading("modele", text="Modele")
             self.result_table.column("conformite_aux_normes", anchor=CENTER, width=100)
             self.result_table.heading("conformite_aux_normes", text="Conformité")
+            self.result_table.column("date_controle", anchor=CENTER, width=100)
+            self.result_table.heading("date_controle", text="Date du contrôle")
             self.result_table.column("ref_dossier", anchor=CENTER)
             self.result_table.heading("ref_dossier", text="Dossier")
 
@@ -157,6 +159,7 @@ class MyApp(Tk):
                 mob.get("marque"),
                 mob.get("modele"),
                 mob.get("conformite_aux_normes", ""),
+                mob.get("date_controle"),
                 mob.get("ref_dossier")
                 )
             self.result_table.insert('', END, values= row_data)
