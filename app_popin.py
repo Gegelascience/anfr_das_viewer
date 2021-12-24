@@ -20,6 +20,18 @@ class Splash(Toplevel):
         for child in self.winfo_children():
             child.grid_configure(padx=10, pady=10)
 
+
+         # Gets the requested values of the height and widht.
+        window_width = self.winfo_reqwidth()
+        window_height = self.winfo_reqheight()
+
+        # Gets both half the screen width/height and window width/height
+        position_right = int(self.winfo_screenwidth()/2 - window_width/2)
+        position_down = int(self.winfo_screenheight()/2 - window_height/2)
+
+        # Positions the window in the center of the page.
+        self.geometry("+{}+{}".format(position_right, position_down))
+
         # required to make window show before the program gets to the mainloop
         self.update()
 
@@ -191,6 +203,18 @@ class DetailsDAS(Toplevel):
 
         for child in self.winfo_children():
             child.grid_configure(padx=5, pady=5)
+
+
+        # Gets the requested values of the height and widht.
+        window_width = self.winfo_reqwidth()
+        window_height = self.winfo_reqheight()
+
+        # Gets both half the screen width/height and window width/height
+        position_right = int(self.winfo_screenwidth()/2 - window_width/2)
+        position_down = int(self.winfo_screenheight()/2 - window_height/2)
+
+        # Positions the window in the center of the page.
+        self.geometry("+{}+{}".format(position_right, position_down))
 
     def show_reports(self):
         """ouvre le navigateur sur les rapports"""

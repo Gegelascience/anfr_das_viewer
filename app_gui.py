@@ -103,11 +103,11 @@ class MyApp(Tk):
             window_height = self.winfo_reqheight()
 
             # Gets both half the screen width/height and window width/height
-            self.position_right = int(self.winfo_screenwidth()/2 - window_width/2)
-            self.position_down = int(self.winfo_screenheight()/2 - window_height/2)
+            position_right = int(self.winfo_screenwidth()/2 - window_width/2)
+            position_down = int(self.winfo_screenheight()/2 - window_height/2)
 
             # Positions the window in the center of the page.
-            #self.geometry("+{}+{}".format(self.position_right, self.position_down))
+            self.geometry("+{}+{}".format(position_right, position_down))
 
         else:
             splash.update_failure_msg("Echec lors de la récupération des data de l'ANFR ")
