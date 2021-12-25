@@ -18,7 +18,7 @@ class Splash(Toplevel):
         )
 
         for child in self.winfo_children():
-            child.grid_configure(padx=10, pady=10)
+            child.grid_configure(padx=10, pady=15)
 
 
          # Gets the requested values of the height and widht.
