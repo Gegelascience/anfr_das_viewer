@@ -1,0 +1,74 @@
+# .github/workflows/generateReleases.yml
+name: Generate manually executable for windows and macos
+on: workflow_dispatch
+
+
+jobs:
+
+  build_on_windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+      - name: Install pyinstaller
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+          pip install requests
+      - name: build with pyinstaller
+        run: |
+         pyinstaller das_viewer.py --name DasViewer --onefile -w --version-file versionFileWindows.rc
+      - name: Get current time
+        uses: 1466587594/get-current-time@v2
+        id: current-time
+        with:
+          format: YYYYMMDD
+          utcOffset: "+01:00"
+      - name: GH Release
+        uses: softprops/action-gh-release@v0.1.12
+        with:
+          tag_name: DasViewer-${{steps.current-time.outputs.formattedTime}}
+          files: ./dist/DasViewer.exe
+
+
+  build_on_macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+      - name: Install pyinstaller
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install py2app
+          python3 -m pip install requests
+      - name: prepare build setup
+        run: |
+          py2applet --make-setup das_viewer.py
+        
+      - name: build with py2app
+        run: |
+          python3 setup.py py2app
+          
+      - name: Get current time
+        uses: 1466587594/get-current-time@v2
+        id: current-time
+        with:
+          format: YYYYMMDD
+          utcOffset: "+01:00"
+      - name: check result
+        run: |
+          ls ./dist
+      - name: generation de l'archive
+        run: |
+          tar czf  DasViewerMacOs.tar.gz ./dist
+      - name: GH Release
+        uses: softprops/action-gh-release@v0.1.12
+        with:
+          tag_name: DasViewer-${{steps.current-time.outputs.formattedTime}}
+          files: DasViewerMacOs.tar.gz
