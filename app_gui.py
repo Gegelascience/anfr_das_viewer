@@ -5,6 +5,24 @@ from helpers import anfr
 import app_popin
 
 
+def sortTreeView(tv:ttk.Treeview, col:str, col_index:int, reverse: bool):
+    """sorting treeview """
+
+    list_data = [(tv.item(k)["values"]) for k in tv.get_children()] #Display column #0 cannot be set
+    #list_data.sort(key=lambda t: t[col_index], reverse=reverse)
+    if col == "modele":
+        for item in list_data:
+            item[col_index] = str(item[col_index]).lstrip()
+
+    list_data.sort(key = lambda i: i[col_index].upper(),reverse=reverse)
+
+    for i in tv.get_children():
+        tv.delete(i)
+
+    for item in list_data:
+        tv.insert('', END, values= item)
+
+    tv.heading(col, command=lambda: sortTreeView(tv, col,col_index, not reverse))
 
 
 class MyApp(Tk):
@@ -78,13 +96,13 @@ class MyApp(Tk):
             self.result_table.column("marque", anchor=CENTER, width=150)
             self.result_table.heading("marque", text="Marque")
             self.result_table.column("modele", anchor=CENTER)
-            self.result_table.heading("modele", text="Modele")
+            self.result_table.heading("modele", text="Modele", command=lambda: sortTreeView(self.result_table, "modele",1, False))
             self.result_table.column("conformite_aux_normes", anchor=CENTER, width=100)
-            self.result_table.heading("conformite_aux_normes", text="Conformité")
+            self.result_table.heading("conformite_aux_normes", text="Conformité", command=lambda: sortTreeView(self.result_table, "conformite_aux_normes",2, False))
             self.result_table.column("date_controle", anchor=CENTER, width=100)
-            self.result_table.heading("date_controle", text="Date du contrôle")
+            self.result_table.heading("date_controle", text="Date du contrôle", command=lambda: sortTreeView(self.result_table, "date_controle",3, False))
             self.result_table.column("ref_dossier", anchor=CENTER)
-            self.result_table.heading("ref_dossier", text="Dossier")
+            self.result_table.heading("ref_dossier", text="Dossier", command=lambda: sortTreeView(self.result_table, "ref_dossier",4, False))
 
             self.result_table.bind("<Double-1>",self.show_details)
 
@@ -153,6 +171,8 @@ class MyApp(Tk):
 
         for i in self.result_table.get_children():
             self.result_table.delete(i)
+
+        #modele_sorted_list = sorted(list_resultats,key = lambda i: i["modele"])
 
         for mob in list_resultats:
             row_data= (
